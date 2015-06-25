@@ -1,0 +1,5 @@
+reverseEngineer/
+*.pyc
+archive/
+apiKey.txt
+watchThreads.json
