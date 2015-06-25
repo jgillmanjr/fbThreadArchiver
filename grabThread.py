@@ -163,6 +163,35 @@ def diffCheck(threadID):
 
 	return hasDiff
 
+def getPhotos():
+	"""
+	Examine the main post and comments for photos
+	"""
+	threadDir = pathJoin(archiveDir, threadID)
+	imgDir = pathJoin(threadDir, 'img')
+
+	# Implement the main post when facebook's API wants to be nice
+
+	# Get photos from comments
+	for comment in threadData['comments']:
+		if 'attachment' in comment:
+			imageUri = comment['attachment']['media']['image']['src']
+			imageFileName = imageUri.split('?')[0].split('/')[-1]
+			imageData = requests.get(imageUri).content
+			imagePath = pathJoin(imgDir, imageFileName)
+
+			if pathExists(imagePath):
+				print 'File exists'
+			else:
+				print 'File doesn\'t exist - writing'
+				imageHandle = open(imagePath, 'wb')
+				imageHandle.write(imageData)
+				imageHandle.close()
+
+
+
+			print imageFileName
+
 from pprint import pprint # Keep for now
 for threadID, threadTitle in watchThreads.iteritems():
 	threadID = str(threadID) # String it just in case it was entered as int
@@ -173,6 +202,9 @@ for threadID, threadTitle in watchThreads.iteritems():
 
 	## Now that we have the thread data..
 
+	### Check if things are different
 	if diffCheck(threadID):
 		print 'We had a diff'
 
+	### Grab photos if any...
+	getPhotos()
