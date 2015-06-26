@@ -194,6 +194,12 @@ def getPhotos():
 
 from pprint import pprint # Keep for now
 for threadID, threadTitle in watchThreads.iteritems():
+	try: ## Check just in case the ID went invalid
+		fbGraph.get_object(threadID)
+	except facebook.GraphAPIError:
+		## Invalid, so go to the next iteration
+		continue
+
 	threadID = str(threadID) # String it just in case it was entered as int
 	### Comments for the time being to determine how functions will be built. Clear comments as function is built###
 
