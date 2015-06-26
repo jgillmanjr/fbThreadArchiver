@@ -190,6 +190,25 @@ def getPhotos():
 
 			print imageFileName
 
+def buildIndex ():
+	"""
+	Build the index JSON file
+
+	Javascript will pull this in and do the needful
+	"""
+	indexDict = {}
+
+	## Get the directories - we do this so that threads no longer tracked don't get missed as long as they have an archive
+	for tDir in os.listdir(archiveDir):
+		workingThreadDir = joinPath(archiveDir, tDir)
+		indexDict[tDir] = {}
+
+		# Get the title
+		curThreadFile = open(joinPath(workingThreadDir, 'current', 'data.json'))
+		curThreadData = json.load(curThreadFile)
+		curThreadFile.close()
+		indexDict[tDir]['userTitle'] = curThreadData['userTitle']
+
 from pprint import pprint # Keep for now
 for threadID, threadTitle in watchThreads.iteritems():
 	try: ## Check just in case the ID went invalid
