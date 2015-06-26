@@ -166,6 +166,8 @@ def diffCheck(threadID):
 def getPhotos():
 	"""
 	Examine the main post and comments for photos
+
+	Also add the 'refined' filename
 	"""
 	threadDir = pathJoin(archiveDir, threadID)
 	imgDir = pathJoin(threadDir, 'img')
@@ -179,16 +181,12 @@ def getPhotos():
 			imageFileName = imageUri.split('?')[0].split('/')[-1]
 			imageData = requests.get(imageUri).content
 			imagePath = pathJoin(imgDir, imageFileName)
+			comment['imageFile'] = imageFileName
 
-			if pathExists(imagePath):
-				print 'File exists'
-			else:
-				print 'File doesn\'t exist - writing'
+			if not pathExists(imagePath):
 				imageHandle = open(imagePath, 'wb')
 				imageHandle.write(imageData)
 				imageHandle.close()
-
-
 
 			print imageFileName
 
@@ -205,6 +203,7 @@ for threadID, threadTitle in watchThreads.iteritems():
 
 	threadDirPrep(threadID)
 	threadData = getThreadData(threadID)
+	threadData['userTitle'] = threadTitle # The user supplied title
 
 	## Now that we have the thread data..
 
