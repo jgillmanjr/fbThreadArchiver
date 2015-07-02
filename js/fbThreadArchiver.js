@@ -49,45 +49,7 @@
 				order: [[2, 'desc']] // Show threads with most activity at top
 			});
 		},
-	};
-})(window);
-
-($(
-	function () {
-		fbta.methods.buildIdx();
-
-		/*
-		 * Setup Event Listeners
-		 */
-		// TOC Row Controller
-		$('td.threadRevCount').on('click', function () {
-			var tr = $(this).closest('tr');
-			var row = fbta.misc.tocTable.row(tr);
-			var threadID = row.data().threadID;
-
-			var childContent;
-			var revisionList = fbta.props.indexObj[threadID].revisions;
-
-			if (revisionList.length) {
-				childContent = revisionList;
-			} else {
-				childContent = 'No Revisions for This Thread';
-			}
-
-			if (row.child.isShown()) {
-				row.child.hide();
-			} else {
-				row.child(childContent).show();
-			}
-		});
-
-		// Listen to the main rows to display the current version of a thread
-		$('td.threadTitle, td.threadID').on('click', function () {
-			var tr = $(this).closest('tr');
-			var row = fbta.misc.tocTable.row(tr);
-			var threadID = row.data().threadID;
-			var threadFile = fbta.props.archiveDir + '/' + threadID + '/current/' + fbta.props.dataFile;
-			var threadImgDir = fbta.props.archiveDir + '/' + threadID + '/img';
+		displayThread: function (dataFile, imgDir) {
 			var threadData;
 			var display = $('#display');
 			
@@ -95,7 +57,7 @@
 			 * Get the thread's data
 			 */
 			$.ajax({
-				url: threadFile,
+				url: dataFile,
 				datatype: 'json',
 				async: false,
 				method: 'GET',
@@ -125,7 +87,7 @@
 				// Check if there's a photo with the comment
 				var photo;
 				if ('imageFile' in commentData){
-					photo = '<div class="commentPhoto"><img src="' + threadImgDir + '/' + commentData.imageFile + '"></div>';
+					photo = '<div class="commentPhoto"><img src="' + imgDir + '/' + commentData.imageFile + '"></div>';
 				} else {
 					photo = '';
 				}
@@ -167,6 +129,59 @@
 			_.each(threadData.comments, function(val, idx, list) {
 				buildComment(val);
 			});
+		}
+	};
+})(window);
+
+($(
+	function () {
+		fbta.methods.buildIdx();
+
+		/*
+		 * Setup Event Listeners
+		 */
+		// TOC Row Controller
+		$('td.threadRevCount').on('click', function () {
+			var tr = $(this).closest('tr');
+			var row = fbta.misc.tocTable.row(tr);
+			var threadID = row.data().threadID;
+
+			var childContent;
+			var revisionList = fbta.props.indexObj[threadID].revisions;
+			var hasRevisions = false;
+
+			if (revisionList.length) {
+				childContent = revisionList;
+				hasRevisions = true;
+			} else {
+				childContent = 'No Revisions for This Thread';
+			}
+
+			if (row.child.isShown()) {
+				row.child.hide();
+			} else {
+				if (hasRevisions) {
+					row.child(childContent, 'revisionRow').show();
+				} else {
+					row.child(childContent).show(); // Don't add the class so the listener doesn't fire if we don't have a revision
+				}
+			}
+		});
+
+		// Listen to the main rows to display the current version of a thread
+		$('td.threadTitle, td.threadID').on('click', function () {
+			var tr = $(this).closest('tr');
+			var row = fbta.misc.tocTable.row(tr);
+			var threadID = row.data().threadID;
+			var threadFile = fbta.props.archiveDir + '/' + threadID + '/current/' + fbta.props.dataFile;
+			var threadImgDir = fbta.props.archiveDir + '/' + threadID + '/img';
+			
+			fbta.methods.displayThread(threadFile, threadImgDir);
+		});
+
+		// Listen to the revision rows to display the older version
+		$('tbody').on('click', 'tr.revisionRow', function () {
+			console.log($(this).text());
 		});
 	}
 ));
