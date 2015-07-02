@@ -235,13 +235,13 @@ for threadID, threadTitle in watchThreads.iteritems():
 	threadData = getThreadData(threadID)
 	threadData['userTitle'] = threadTitle # The user supplied title
 
+	### Grab photos if any...
+	getPhotos()
+
 	## Now that we have the thread data..
 
 	### Check if things are different and do needful
 	diffCheck(threadID)
-
-	### Grab photos if any...
-	getPhotos()
 
 # Build the master index
 masterIndex()
