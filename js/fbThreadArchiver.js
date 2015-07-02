@@ -87,6 +87,7 @@
 			var row = fbta.misc.tocTable.row(tr);
 			var threadID = row.data().threadID;
 			var threadFile = fbta.props.archiveDir + '/' + threadID + '/current/' + fbta.props.dataFile;
+			var threadImgDir = fbta.props.archiveDir + '/' + threadID + '/img';
 			var threadData;
 			var display = $('#display');
 			
@@ -123,10 +124,19 @@
 
 			// Run through comments (if any)
 			_.each(threadData.comments, function(val, idx, list) {
+				// Check if there's a photo with the comment
+				var photo;
+				if ('imageFile' in val){
+					photo = '<div class="commentPhoto"><img src="' + threadImgDir + '/' + val.imageFile + '"></div>';
+				} else {
+					photo = '';
+				}
+
 				$('#commentsDiv').append(
 					'<div class="commentDiv">' +
-					'<div><span class="postedBy">Posted by: </span><span class="authorName">' + val.from.name + '</span></div>' +
+					'<div><span class="postedBy">Posted by: </span><span class="authorName">' + val.from.name + '</span><span class="commentTime"> @ ' + val.created_time +'</span></div>' +
 					'<div class="commentMessage">' + val.message + '</div>' +
+					photo +
 					'<div class="commentLikes">Likes: ' + val.like_count + '</div>' +
 					'</div>'
 				);

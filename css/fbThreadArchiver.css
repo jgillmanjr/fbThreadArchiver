@@ -9,6 +9,10 @@ table {
 	display: inline-block;
 }
 
+#display {
+	margin: auto;
+}
+
 #index {
 	width: 35%;
 }
@@ -18,4 +22,19 @@ table {
 	border-radius: 10px;
 	padding: 10px;
 
+	margin: 5px;
+}
+
+#commentsDiv {
+	border: green 1px dashed;
+	border-radius: 10px;
+	padding: 10px;
+	margin: 5px;
+}
+
+#commentsDiv > div{
+	border: gray dotted 2px;
+	border-radius: 10px;
+	margin: 5px;
+	padding: 5px;
 }
