@@ -204,6 +204,12 @@ def masterIndex():
 	for thread in threadList:
 		if os.path.isfile(pathJoin(archiveDir, thread, 'current', 'data.json')): #Current check
 			masterObj[thread] = {'current': True, 'revisions': []}
+
+			tDataFile = open(pathJoin(archiveDir, thread, 'current', 'data.json')) # Get the user title
+			userTitle = json.load(tDataFile)['userTitle']
+			tDataFile.close()
+
+			masterObj[thread]['userTitle'] = userTitle
 		for revision in os.listdir(pathJoin(archiveDir, thread, 'revision')): #Check for revisions
 			revDir = pathJoin(archiveDir, thread, 'revision', revision)
 			if os.path.isdir(revDir): # Check for a valid data file
