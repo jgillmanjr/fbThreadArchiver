@@ -84,7 +84,7 @@ def getThreadData(threadID):
 					anotherPage = False
 	def getCommentData():
 		for commentId in threadCommentIDs:
-			threadCommentData.append(fbGraph.get_object(commentId, **{'fields': 'from,message,attachment,like_count,created_time'}))
+			threadCommentData.append(fbGraph.get_object(commentId, **{'fields': 'from,message,attachment,like_count,created_time,comments'}))
 
 	threadCommentIDs = [] # IDs of comments to fully get, index to track order
 	threadCommentData = [] # Actual comment data, index to track order
@@ -99,7 +99,7 @@ def getThreadData(threadID):
 
 
 	## DEBUG - leave in for now
-	pprint(threadCommentData)
+	#pprint(threadCommentData)
 	#pprint(rawData)
 
 	## Now build a clean object to return
