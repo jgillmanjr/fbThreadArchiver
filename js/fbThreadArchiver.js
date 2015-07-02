@@ -111,10 +111,51 @@
 			 * Build it out...
 			 */
 
+			// Use for building comments, and for handling differences in "top level" and "reply" comments
+			var buildComment = function (commentData, parentID) {
+				var commentDivClass;
+				var mainComment = true;
+				if (parentID) { // We're dealing with a comment of a comment
+					commentDivClass = 'replyCommentDiv';
+					mainComment = false;
+				} else {
+					commentDivClass = 'commentDiv';
+				}
+
+				// Check if there's a photo with the comment
+				var photo;
+				if ('imageFile' in commentData){
+					photo = '<div class="commentPhoto"><img src="' + threadImgDir + '/' + commentData.imageFile + '"></div>';
+				} else {
+					photo = '';
+				}
+
+				var commentBlock = 
+					'<div class="' + commentDivClass + '" id="' + commentData.id + '">' +
+					'<div class="postInfo"><span class="postedBy">Posted by: </span><span class="authorName">' + commentData.from.name + '</span><span class="commentTime"> @ ' + commentData.created_time +'</span></div>' +
+					'<div class="commentMessage">' + commentData.message + '</div>' +
+					photo +
+					'<div class="commentLikes">Likes: ' + commentData.like_count + '</div>' +
+					'</div>';
+
+				if (mainComment) {
+					$('#commentsDiv').append(commentBlock);
+				} else {
+					$('#' + parentID).append(commentBlock);
+				}
+
+				// Check to see if we have subcomments as part of this. If so, do needful.
+				if ('comments' in commentData) {
+					_.each(commentData.comments.data, function (val, idx, list) {
+						buildComment(val, commentData.id);
+					});
+				}
+			 };
+
 			// Initial Post
 			display.append(
 				'<div id="postDiv">' +
-				'<div id="postInfo"><span id="postBy">Posted by: </span><span class="authorName">' + threadData.creator + ' </span><span id="postTime"> @ ' + threadData.updatedTime + '</span></div>' +
+				'<div class="postInfo"><span id="postBy">Posted by: </span><span class="authorName">' + threadData.creator + ' </span><span id="postTime"> @ ' + threadData.updatedTime + '</span></div>' +
 				'<div class="postMessage">' + threadData.message + '</div>' +
 				'</div>'
 			);
@@ -124,22 +165,7 @@
 
 			// Run through comments (if any)
 			_.each(threadData.comments, function(val, idx, list) {
-				// Check if there's a photo with the comment
-				var photo;
-				if ('imageFile' in val){
-					photo = '<div class="commentPhoto"><img src="' + threadImgDir + '/' + val.imageFile + '"></div>';
-				} else {
-					photo = '';
-				}
-
-				$('#commentsDiv').append(
-					'<div class="commentDiv">' +
-					'<div><span class="postedBy">Posted by: </span><span class="authorName">' + val.from.name + '</span><span class="commentTime"> @ ' + val.created_time +'</span></div>' +
-					'<div class="commentMessage">' + val.message + '</div>' +
-					photo +
-					'<div class="commentLikes">Likes: ' + val.like_count + '</div>' +
-					'</div>'
-				);
+				buildComment(val);
 			});
 		});
 	}
