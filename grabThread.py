@@ -188,26 +188,31 @@ def getPhotos():
 				imageHandle.write(imageData)
 				imageHandle.close()
 
-			print imageFileName
-
-def buildIndex ():
+def masterIndex():
 	"""
-	Build the index JSON file
-
-	Javascript will pull this in and do the needful
+	Build a JSON file with the master index
 	"""
-	indexDict = {}
+	masterObj = {}
+	threadList = []
 
-	## Get the directories - we do this so that threads no longer tracked don't get missed as long as they have an archive
-	for tDir in os.listdir(archiveDir):
-		workingThreadDir = joinPath(archiveDir, tDir)
-		indexDict[tDir] = {}
+	# Get the threads sitting in the archive directory
+	for threadDir in os.listdir(archiveDir):
+		if os.path.isdir(pathJoin(archiveDir, threadDir)): #Make sure it's a directory, yo
+			threadList.append(threadDir);
 
-		# Get the title
-		curThreadFile = open(joinPath(workingThreadDir, 'current', 'data.json'))
-		curThreadData = json.load(curThreadFile)
-		curThreadFile.close()
-		indexDict[tDir]['userTitle'] = curThreadData['userTitle']
+	# Go through that list and check for current and/or revisioned stuff
+	for thread in threadList:
+		if os.path.isfile(pathJoin(archiveDir, thread, 'current', 'data.json')): #Current check
+			masterObj[thread] = {'current': True, 'revisions': []}
+		for revision in os.listdir(pathJoin(archiveDir, thread, 'revision')): #Check for revisions
+			revDir = pathJoin(archiveDir, thread, 'revision', revision)
+			if os.path.isdir(revDir): # Check for a valid data file
+				if os.path.isfile(pathJoin(revDir, 'data.json')):
+					masterObj[thread]['revisions'].append(revision)
+
+	masterFP = open('index.json', 'w')
+	json.dump(masterObj, masterFP, indent = 4)
+	masterFP.close()
 
 from pprint import pprint # Keep for now
 for threadID, threadTitle in watchThreads.iteritems():
@@ -226,9 +231,11 @@ for threadID, threadTitle in watchThreads.iteritems():
 
 	## Now that we have the thread data..
 
-	### Check if things are different
-	if diffCheck(threadID):
-		print 'We had a diff'
+	### Check if things are different and do needful
+	diffCheck(threadID)
 
 	### Grab photos if any...
 	getPhotos()
+
+# Build the master index
+masterIndex()
