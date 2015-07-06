@@ -2,11 +2,24 @@ table {
 	text-align: center;
 }
 
+body {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
 .detailsControl {
 	font-weight: bold;
 }
 .mainDiv {
 	display: inline-block;
+	width: 40%;
+	/*
+	 * The following are for debugging
+	 */
+	border: orange 1px solid;
+	border-radius: 10px;
+	padding: 10px;
 }
 
 .replyCommentDiv {
@@ -34,14 +47,6 @@ table {
 
 .postInfo, .commentLikes {
 	font-weight: bold;
-}
-
-#display {
-	margin: auto;
-}
-
-#index {
-	width: 35%;
 }
 
 #postDiv {
