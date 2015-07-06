@@ -216,7 +216,7 @@ def masterIndex():
 				if os.path.isfile(pathJoin(revDir, 'data.json')):
 					masterObj[thread]['revisions'].append(revision)
 
-	masterFP = open('index.json', 'w')
+	masterFP = open(pathJoin(scriptDir, 'index.json'), 'w')
 	json.dump(masterObj, masterFP, indent = 4)
 	masterFP.close()
 
