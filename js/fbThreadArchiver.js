@@ -117,7 +117,7 @@
 			// Initial Post
 			display.append(
 				'<div id="postDiv">' +
-				'<div class="postInfo"><span id="postBy">Posted by: </span><span class="authorName">' + threadData.creator + ' </span><span id="postTime"> @ ' + threadData.updatedTime + '</span></div>' +
+				'<div class="postInfo"><span id="postBy">Posted by: </span><span class="authorName">' + threadData.creator + ' </span><span id="postTime"> @ ' + threadData.createdTime + '</span></div>' +
 				'<div class="postMessage">' + threadData.message + '</div>' +
 				'</div>'
 			);
@@ -161,7 +161,12 @@
 				row.child.hide();
 			} else {
 				if (hasRevisions) {
-					row.child(childContent, 'revisionRow').show();
+					childContent.sort();
+					var childList = [];
+					_.each(childContent, function (val, idx, list) {
+						childList.push($.parseHTML('<tr class="revisionRow" data-threadID="' + threadID + '"><td></td><td>' + val + '</td></tr>'));
+					});
+					row.child(childList).show();
 				} else {
 					row.child(childContent).show(); // Don't add the class so the listener doesn't fire if we don't have a revision
 				}
@@ -181,7 +186,11 @@
 
 		// Listen to the revision rows to display the older version
 		$('tbody').on('click', 'tr.revisionRow', function () {
-			console.log($(this).text());
+			var threadID = $(this).attr('data-threadID');
+			var threadFile = fbta.props.archiveDir + '/' + threadID + '/revision/' + $(this).text() + '/' + fbta.props.dataFile;
+			var threadImgDir = fbta.props.archiveDir + '/' + threadID + '/img';
+
+			fbta.methods.displayThread(threadFile, threadImgDir);
 		});
 	}
 ));
