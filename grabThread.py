@@ -107,9 +107,9 @@ def getThreadData(threadID):
 	cleanData['comments'] = threadCommentData
 	cleanData['message'] = rawData['message']
 	if 'created_time' in rawData:
-		cleanData['createTime'] = rawData['created_time']
+		cleanData['createdTime'] = rawData['created_time']
 	else:
-		cleanData['updatedTime'] = rawData['updated_time']
+		cleanData['createdTime'] = rawData['updated_time']
 	cleanData['creator'] = rawData['from']['name']
 	if 'actions' in rawData:
 		cleanData['link'] = rawData['actions'][0]['link']
