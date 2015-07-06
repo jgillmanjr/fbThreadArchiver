@@ -11,12 +11,13 @@ Either way, now you can!
 1. Get yourself an appropriate API token for facebook ([this](http://www.slickremix.com/facebook-60-day-user-access-token-generator/1/) should be a good place to get you started if you don't already have your own system for creating tokens). Stick this in `apiKey.txt`
 
 1. Create a file called `watchThreads.json`. In it, create an object representing the threads you want to watch and give them a title. Format is as so:
-```
-{
-	"1234": "Call this whatever you want",
-	"5678": "Remember that the key is the ID of the thread you want to watch"
-}
-```
+
+	```
+	{
+		"1234": "Call this whatever you want",
+		"5678": "Remember that the key is the ID of the thread you want to watch"
+	}
+	```
 
 1. Run `grabThread.py`. Assuming things are kosher (for example, you actually have the right permissions setup when you generated the API token and you have access to the thread normally), it should grab your dataz.
 
